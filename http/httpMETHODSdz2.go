@@ -43,11 +43,11 @@ func (m *MessageStorage) messageHandler(w http.ResponseWriter, r *http.Request) 
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	m.mtx.RLock()
-	for id, msg := range m.msg {
-		fmt.Println(id, msg)
-	}
-	m.mtx.RUnlock()
+	//m.mtx.RLock()
+	//for id, msg := range m.msg {
+	//	fmt.Println(id, msg)
+	//}
+	//m.mtx.RUnlock()
 }
 
 func (m *MessageStorage) deleteHandler(w http.ResponseWriter, r *http.Request) {
@@ -83,10 +83,19 @@ func (m *MessageStorage) deleteHandler(w http.ResponseWriter, r *http.Request) {
 
 }
 
+func (m MessageStorage) savedMessageHandler(w http.ResponseWriter, r *http.Request) {
+	m.mtx.RLock()
+	for id, msg := range m.msg {
+		fmt.Println(id, msg)
+	}
+	m.mtx.RUnlock()
+}
+
 func main() {
 	m := NewMessageStorage()
 	http.HandleFunc("/message", m.messageHandler)
 	http.HandleFunc("/delete", m.deleteHandler)
+	http.HandleFunc("/savedmessage", m.savedMessageHandler)
 
 	fmt.Println("Сервер запустился")
 
