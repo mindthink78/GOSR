@@ -22,6 +22,18 @@ func NewMessageStorage() MessageStorage {
 }
 
 func (m *MessageStorage) messageHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "POST" {
+		fmt.Println("Method not allowed")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		if _, err := w.Write([]byte("Error")); err != nil {
+			fmt.Println("Не получилось вывести сообщение")
+			http.Error(w, "Не получилось вывести сообщение", 400)
+			return
+		}
+		return
+	}
+
 	httpRequestBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		fmt.Println("FAIL")
@@ -51,6 +63,18 @@ func (m *MessageStorage) messageHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (m *MessageStorage) deleteHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "DELETE" {
+		fmt.Println("Method not allowed")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		if _, err := w.Write([]byte("Error")); err != nil {
+			fmt.Println("Не получилось вывести сообщение")
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		return
+	}
+
 	httpRequestBody, err := io.ReadAll(r.Body)
 	if err != nil {
 		fmt.Println("FAIl")
@@ -84,6 +108,18 @@ func (m *MessageStorage) deleteHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (m MessageStorage) savedMessageHandler(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "GET" {
+		fmt.Println("Method not allowed")
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		if _, err := w.Write([]byte("Error")); err != nil {
+			fmt.Println("Не получилось вывести сообщение")
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		return
+	}
+
 	m.mtx.RLock()
 	for id, msg := range m.msg {
 		fmt.Println(id, msg)
